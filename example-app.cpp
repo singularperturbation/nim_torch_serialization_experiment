@@ -12,6 +12,11 @@ int main(int argc, const char* argv[]) {
   // Deserialize the ScriptModule from a file using torch::jit::load().
   std::shared_ptr<torch::jit::script::Module> module = torch::jit::load(argv[1]);
 
+  std::cout << "MODEL NAME: \n";
+  std::string model_name = module->name();
+  std::cout << model_name << "\n";
+  std::cout << module->is_training() << "\n";
+
   assert(module != nullptr);
   std::cout << "ok\n";
 }

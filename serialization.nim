@@ -1,23 +1,7 @@
+import os
 import nimline
+import types
 #import torch/torch_cpp
-
-const cwd = staticExec("pwd")
-
-nimline.cppdefines("_GLIBCXX_USE_CXX11_ABI=0")
-nimline.cppincludes(cwd & "/libtorch/include/")
-nimline.cpplibpaths(cwd & "/libtorch/lib")
-nimline.cpplibs("torch")
-nimline.cpplibs("caffe2")
-nimline.cpplibs("c10")
-
-
-const torch_header = "<torch/script.h>"
-
-type
-  # Doesn't seem to like ModulePtr = SharedPointer[Module], but maybe Module has
-  # to be CppProxy type?
-  Module {.importcpp: "torch::jit::script::Module", header: torch_header.} = object
-  ModulePtr {.importcpp: "std::shared_ptr<torch::jit::script::Module>", header: "<memory>".} = object
 
 # Was getting error with the converter in nimline where was producing:
 #
@@ -33,7 +17,15 @@ proc main() =
   var model_file = "resnet_18.pt".myToStdString()
 
   var unserialized_model = load(model_file)
+  echo "LOADED MODEL"
+  var model_name: StdString = unserialized_model.toCpp().invokeArrow("name")
+  echo unserialized_model.repr
 
+  echo "Model name: " & $model_name
+
+  echo "Model is in training mode: " &
+    $unserialized_model.toCpp().invokeArrow("is_training").to(bool)
+  
   echo "Loaded model"
 
 

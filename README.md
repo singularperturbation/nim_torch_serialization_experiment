@@ -86,3 +86,11 @@ In order to do more than just load the model, need to be able to get data in
 Ideally want to be able to interop with the existing nimtorch library, but
 don't quite know where C++ types and nimtorch types interact yet (looking at
 torch/torch_cpp.nim for some of the wrappers around ATen types).
+
+Reminder: File 2 bug reports for nimline
+
+- converter toStdString() looks to be buggy (generating code with an extra comma).
+- When creating shared pointer for type with `SharedPointer[T]`, tries to
+  dereference the type `std::shared_pointer<'*0>`, not `std::shared_pointer<'0>`,
+  which tries to get the base of the type passed in `*T -> T`.
+  This somehow works with older versions of Nim.
